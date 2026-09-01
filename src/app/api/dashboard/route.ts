@@ -4,8 +4,7 @@ import prisma from "@/lib/prisma";
 import { startOfMonth, endOfMonth, subMonths, addDays } from "date-fns";
 import { getMockContas, getMockEntradas } from "@/lib/mockData";
 
-// Revalidar a cada 60 segundos em vez de nunca cachear (força-dynamic)
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
