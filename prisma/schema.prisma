@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Usuario {
+  id           String         @id @default(cuid())
+  nome         String
+  email        String         @unique
+  senha        String
+  avatar       String?
+  cargo        String         @default("operador") // admin, operador, caixa
+  ativo        Boolean        @default(true)
+  ultimoAcesso DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  contas       Conta[]
+  entradas     EntradaCaixa[]
+
+  @@map("usuarios")
+}
+
+model Conta {
+  id             String      @id @default(cuid())
+  fornecedor     String
+  valor          Decimal     @db.Decimal(10, 2)
+  discriminacao  String?
+  dataVencimento DateTime
+  dataPagamento  DateTime?
+  valorPago      Decimal?    @db.Decimal(10, 2)
+  status         StatusConta @default(PENDENTE)
+  categoria      Categoria   @default(CUSTEIO)
+  observacao     String?
+  usuarioId      String
+  usuario        Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+
+  // Índices compostos para as queries do dashboard (status+data = muito mais rápido)
+  @@index([status, dataVencimento])
+  @@index([status, dataPagamento])
+  @@index([dataVencimento])
+  @@index([status])
+  @@index([categoria])
+  @@map("contas")
+}
+
+
+enum StatusConta {
+  PENDENTE
+  PAGA
+  VENCIDA
+  CANCELADA
+}
+
+enum Categoria {
+  CUSTEIO
+  INVESTIMENTO
+  OUTRAS
+}
+
+model EntradaCaixa {
+  id          String      @id @default(cuid())
+  descricao   String
+  valor       Decimal     @db.Decimal(10, 2)
+  dataEntrada DateTime    @default(now())
+  tipo        TipoEntrada @default(MANUAL)
+  observacao  String?
+  usuarioId   String
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+
+  @@index([dataEntrada])
+  @@map("entradas_caixa")
+}
+
+enum TipoEntrada {
+  MANUAL
+  VENDA
+  OUTROS
+}

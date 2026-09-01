@@ -1,0 +1,24 @@
+{
+  "name": "Dona Vó Gestão",
+  "short_name": "Dona Vó",
+  "description": "Sistema de gestão financeira e contas a pagar do restaurante Dona Vó Comida Caseira",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDF8F3",
+  "theme_color": "#A83A1F",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo-donavo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-donavo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

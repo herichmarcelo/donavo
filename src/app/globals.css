@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+@layer base {
+  :root {
+    /* Brand Dona Vó Colors - Light Theme */
+    --background: 33 50% 97%; /* #FDF8F3 - Off-white quente */
+    --foreground: 18 47% 12%; /* #2C1810 - Marrom escuro */
+
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 18 47% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 18 47% 12%;
+
+    --primary: 12 69% 39%; /* #A83A1F - Terracota principal */
+    --primary-foreground: 33 50% 97%;
+    --primary-dark: 12 70% 28%; /* #7A2A15 */
+    --primary-light: 12 59% 51%; /* #C9563A */
+
+    --secondary: 40 60% 58%; /* #D4A853 - Dourado */
+    --secondary-foreground: 18 47% 12%;
+    --secondary-light: 42 70% 70%; /* #E8C87A */
+
+    --muted: 24 20% 92%;
+    --muted-foreground: 18 20% 35%; /* #6B5247 */
+
+    --accent: 40 60% 58%;
+    --accent-foreground: 18 47% 12%;
+
+    --destructive: 6 63% 46%; /* #C0392B - Danger */
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 138 25% 39%; /* #4A7C59 - Verde oliva */
+    --success-foreground: 0 0% 100%;
+
+    --warning: 40 60% 58%; /* #D4A853 */
+    --warning-foreground: 18 47% 12%;
+
+    --info: 200 30% 51%; /* #5B8FA8 */
+    --info-foreground: 0 0% 100%;
+
+    --border: 24 25% 87%; /* #E8DDD4 */
+    --input: 24 25% 87%;
+    --ring: 12 69% 39%;
+
+    --radius: 0.75rem;
+
+    --font-playfair: 'Playfair Display', Georgia, serif;
+    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .dark {
+    /* Brand Dona Vó Colors - Dark Theme */
+    --background: 15 23% 8%; /* #1A1210 */
+    --foreground: 33 50% 97%; /* #FDF8F3 */
+
+    --card: 16 26% 14%; /* #2C1F1A */
+    --card-foreground: 33 50% 97%;
+
+    --popover: 16 26% 14%;
+    --popover-foreground: 33 50% 97%;
+
+    --primary: 12 69% 45%; /* #C9563A */
+    --primary-foreground: 33 50% 97%;
+    --primary-dark: 12 69% 39%;
+    --primary-light: 12 75% 58%;
+
+    --secondary: 40 60% 58%; /* #D4A853 */
+    --secondary-foreground: 18 47% 12%;
+    --secondary-light: 42 70% 70%;
+
+    --muted: 18 15% 20%;
+    --muted-foreground: 22 15% 67%; /* #B8A89E */
+
+    --accent: 40 60% 58%;
+    --accent-foreground: 18 47% 12%;
+
+    --destructive: 6 63% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 138 30% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 40 60% 58%;
+    --warning-foreground: 18 47% 12%;
+
+    --info: 200 35% 58%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 18 20% 20%; /* #3D2E26 */
+    --input: 18 20% 20%;
+    --ring: 12 69% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased selection:bg-brand-gold/30 selection:text-brand-terracottaDark;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, .font-serif-title {
+    font-family: var(--font-playfair);
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full hover:bg-muted-foreground/40 transition-colors;
+}
+
+/* Mobile Touch Targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Glassmorphism & Card elevation */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border));
+}
+
+.dark .glass-panel {
+  background: rgba(44, 31, 26, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border));
+}
+
+/* Bottom Nav Safe Area */
+.safe-bottom-padding {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+}
