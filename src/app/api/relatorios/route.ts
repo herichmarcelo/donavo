@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { startOfMonth, endOfMonth } from "date-fns";
-import { getMockContas } from "@/lib/mockData";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(req: NextRequest) {
   try {
@@ -44,32 +44,18 @@ export async function GET(req: NextRequest) {
       dataFim = endOfMonth(d);
     }
 
-    let contas: any[] = [];
-
-    try {
-      contas = await prisma.conta.findMany({
-        where: {
-          dataVencimento: {
-            gte: dataInicio,
-            lte: dataFim,
-          },
+    const contas = await prisma.conta.findMany({
+      where: {
+        dataVencimento: {
+          gte: dataInicio,
+          lte: dataFim,
         },
-        orderBy: { dataVencimento: "asc" },
-        include: {
-          usuario: { select: { nome: true } },
-        },
-      });
-    } catch (dbErr) {
-      console.warn("Usando mock data para Relatórios:", dbErr);
-      const allMocks = getMockContas();
-      contas = allMocks.filter((c) => {
-        const v = new Date(c.dataVencimento);
-        return v >= dataInicio && v <= dataFim;
-      });
-      if (contas.length === 0) {
-        contas = allMocks; // Retorna o dataset padrão se o período for amplo
-      }
-    }
+      },
+      orderBy: { dataVencimento: "asc" },
+      include: {
+        usuario: { select: { nome: true } },
+      },
+    });
 
     // 1. Resumo Geral
     const totalGeral = contas.reduce((acc, c) => acc + Number(c.valor), 0);

@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "prisma:seed": "node --loader ts-node/esm prisma/seed.ts"
+    "prisma:seed": "ts-node --transpile-only -e commonjs prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

@@ -33,7 +33,7 @@ export default function DashboardPage() {
   const fetchDashboardData = React.useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/dashboard");
+      const res = await fetch("/api/dashboard", { cache: "no-store" });
       if (res.ok) {
         const json = await res.json();
         setData(json);

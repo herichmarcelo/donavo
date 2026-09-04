@@ -34,26 +34,6 @@ interface ContaFormProps {
   isEditing?: boolean;
 }
 
-const fornecedoresFrequentes = [
-  "Assai Atacadista",
-  "Aliança Carnes",
-  "Bom Preço Hortifruti",
-  "Supermercado Pires",
-  "Fort Atacadista",
-  "Casa do Porco",
-  "Frutaria da Julio",
-  "Stephany dos Santos (Embalagens)",
-  "Juan Gabriel (Sistema PDV)",
-  "Vivo/Telefônica",
-  "Supergasbras",
-  "Climatizar (Edgar)",
-  "MP Refricenterse (Luciene)",
-  "R Center Outlet (Luciene)",
-  "Edilberto Vigano (Aluguel)",
-  "Facebook/Instagram Ads",
-  "Google Ads",
-];
-
 export function ContaForm({ initialData, isEditing = false }: ContaFormProps) {
   const router = useRouter();
   const { toast } = useToast();
@@ -158,23 +138,6 @@ export function ContaForm({ initialData, isEditing = false }: ContaFormProps) {
                 {errors.fornecedor.message}
               </p>
             )}
-
-            {/* Sugestões Rápidas */}
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              <span className="text-[11px] text-muted-foreground mr-1 self-center">
-                Frequentes:
-              </span>
-              {fornecedoresFrequentes.slice(0, 6).map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setValue("fornecedor", f, { shouldValidate: true })}
-                  className="text-[11px] px-2 py-0.5 rounded-md bg-muted/60 hover:bg-primary/10 hover:text-primary transition-colors border border-border"
-                >
-                  {f.split(" ")[0]}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Grid: Valor & Vencimento */}
