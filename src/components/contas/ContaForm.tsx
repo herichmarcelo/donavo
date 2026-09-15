@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Calendar,
@@ -16,6 +16,8 @@ import {
 import { contaSchema, ContaInput } from "@/lib/validations/conta";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CurrencyInput } from "@/components/ui/currency-input";
+import { DateInput } from "@/components/ui/date-input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -27,7 +29,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { formatDateInput } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 
 interface ContaFormProps {
   initialData?: any;
@@ -44,6 +46,7 @@ export function ContaForm({ initialData, isEditing = false }: ContaFormProps) {
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors },
   } = useForm<ContaInput>({
     resolver: zodResolver(contaSchema),
@@ -52,7 +55,7 @@ export function ContaForm({ initialData, isEditing = false }: ContaFormProps) {
           fornecedor: initialData.fornecedor,
           valor: Number(initialData.valor),
           discriminacao: initialData.discriminacao || "",
-          dataVencimento: formatDateInput(initialData.dataVencimento),
+          dataVencimento: formatDate(initialData.dataVencimento),
           categoria: initialData.categoria || "CUSTEIO",
           observacao: initialData.observacao || "",
           parcelado: false,
@@ -62,7 +65,7 @@ export function ContaForm({ initialData, isEditing = false }: ContaFormProps) {
           fornecedor: "",
           valor: "" as any,
           discriminacao: "",
-          dataVencimento: formatDateInput(new Date()),
+          dataVencimento: formatDate(new Date()),
           categoria: "CUSTEIO",
           observacao: "",
           parcelado: false,
@@ -147,17 +150,24 @@ export function ContaForm({ initialData, isEditing = false }: ContaFormProps) {
                 Valor Total (R$) *
               </Label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground z-10">
                   R$
                 </span>
-                <Input
-                  id="valor"
-                  type="number"
-                  step="0.01"
-                  placeholder="0,00"
-                  className="pl-10 h-11 rounded-xl text-sm font-bold"
-                  disabled={isLoading}
-                  {...register("valor")}
+                <Controller
+                  name="valor"
+                  control={control}
+                  render={({ field }) => (
+                    <CurrencyInput
+                      id="valor"
+                      placeholder="0,00"
+                      className="pl-10 h-11 rounded-xl text-sm font-bold"
+                      disabled={isLoading}
+                      value={field.value}
+                      onChange={(val) => field.onChange(val)}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                    />
+                  )}
                 />
               </div>
               {errors.valor && (
@@ -169,18 +179,23 @@ export function ContaForm({ initialData, isEditing = false }: ContaFormProps) {
 
             <div className="space-y-1.5">
               <Label htmlFor="dataVencimento" className="text-xs font-semibold">
-                Data de Vencimento *
+                Data de Vencimento (DD/MM/AAAA) *
               </Label>
-              <div className="relative">
-                <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="dataVencimento"
-                  type="date"
-                  className="pl-10 h-11 rounded-xl text-sm"
-                  disabled={isLoading}
-                  {...register("dataVencimento")}
-                />
-              </div>
+              <Controller
+                name="dataVencimento"
+                control={control}
+                render={({ field }) => (
+                  <DateInput
+                    id="dataVencimento"
+                    className="h-11 rounded-xl text-sm"
+                    disabled={isLoading}
+                    value={field.value}
+                    onChange={(val) => field.onChange(val)}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                  />
+                )}
+              />
               {errors.dataVencimento && (
                 <p className="text-xs text-destructive font-medium">
                   {errors.dataVencimento.message}

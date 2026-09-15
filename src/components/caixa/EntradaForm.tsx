@@ -2,12 +2,14 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Calendar, DollarSign, FileText, Loader2, Tag } from "lucide-react";
 import { entradaCaixaSchema, EntradaCaixaInput } from "@/lib/validations/entrada";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CurrencyInput } from "@/components/ui/currency-input";
+import { DateInput } from "@/components/ui/date-input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -18,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { formatDateInput } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 
 export function EntradaForm() {
   const router = useRouter();
@@ -29,6 +31,7 @@ export function EntradaForm() {
     register,
     handleSubmit,
     setValue,
+    control,
     watch,
     formState: { errors },
   } = useForm<EntradaCaixaInput>({
@@ -36,7 +39,7 @@ export function EntradaForm() {
     defaultValues: {
       descricao: "",
       valor: "" as any,
-      dataEntrada: formatDateInput(new Date()),
+      dataEntrada: formatDate(new Date()),
       tipo: "MANUAL",
       observacao: "",
     },
@@ -109,17 +112,24 @@ export function EntradaForm() {
                 Valor Recebido (R$) *
               </Label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground z-10">
                   R$
                 </span>
-                <Input
-                  id="valor"
-                  type="number"
-                  step="0.01"
-                  placeholder="0,00"
-                  className="pl-10 h-11 rounded-xl text-sm font-bold"
-                  disabled={isLoading}
-                  {...register("valor")}
+                <Controller
+                  name="valor"
+                  control={control}
+                  render={({ field }) => (
+                    <CurrencyInput
+                      id="valor"
+                      placeholder="0,00"
+                      className="pl-10 h-11 rounded-xl text-sm font-bold"
+                      disabled={isLoading}
+                      value={field.value}
+                      onChange={(val) => field.onChange(val)}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                    />
+                  )}
                 />
               </div>
               {errors.valor && (
@@ -131,18 +141,23 @@ export function EntradaForm() {
 
             <div className="space-y-1.5">
               <Label htmlFor="dataEntrada" className="text-xs font-semibold">
-                Data do Recebimento *
+                Data do Recebimento (DD/MM/AAAA) *
               </Label>
-              <div className="relative">
-                <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="dataEntrada"
-                  type="date"
-                  className="pl-10 h-11 rounded-xl text-sm"
-                  disabled={isLoading}
-                  {...register("dataEntrada")}
-                />
-              </div>
+              <Controller
+                name="dataEntrada"
+                control={control}
+                render={({ field }) => (
+                  <DateInput
+                    id="dataEntrada"
+                    className="h-11 rounded-xl text-sm"
+                    disabled={isLoading}
+                    value={field.value}
+                    onChange={(val) => field.onChange(val)}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                  />
+                )}
+              />
               {errors.dataEntrada && (
                 <p className="text-xs text-destructive font-medium">
                   {errors.dataEntrada.message}

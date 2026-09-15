@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { contaSchema } from "@/lib/validations/conta";
-import { startOfMonth, endOfMonth, addMonths, parseISO } from "date-fns";
+import { startOfMonth, endOfMonth, addMonths } from "date-fns";
+import { parseDateSafe } from "@/lib/formatters";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validatedData = contaSchema.parse(body);
 
-    const dataVencimentoBase = parseISO(validatedData.dataVencimento);
+    const dataVencimentoBase = parseDateSafe(validatedData.dataVencimento) || new Date();
     const numParcelas = validatedData.parcelado ? validatedData.numeroParcelas || 1 : 1;
 
     if (numParcelas > 1) {

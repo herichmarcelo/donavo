@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { entradaCaixaSchema } from "@/lib/validations/entrada";
-import { parseISO, startOfDay, endOfDay } from "date-fns";
+import { startOfDay, endOfDay } from "date-fns";
+import { parseDateSafe } from "@/lib/formatters";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
       data: {
         descricao: validatedData.descricao,
         valor: Number(validatedData.valor),
-        dataEntrada: parseISO(validatedData.dataEntrada),
+        dataEntrada: parseDateSafe(validatedData.dataEntrada) || new Date(),
         tipo: validatedData.tipo,
         observacao: validatedData.observacao,
         usuarioId: session.user.id,

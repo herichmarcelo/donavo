@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { Loader2, CheckCircle2, DollarSign, Calendar, FileText } from "lucide-react";
@@ -12,6 +12,8 @@ import { formatCurrency, formatDate } from "@/lib/formatters";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CurrencyInput } from "@/components/ui/currency-input";
+import { DateInput } from "@/components/ui/date-input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -25,12 +27,13 @@ export function PagarContaSheet() {
     register,
     handleSubmit,
     setValue,
+    control,
     reset,
     formState: { errors },
   } = useForm<PagarContaInput>({
     resolver: zodResolver(pagarContaSchema),
     defaultValues: {
-      dataPagamento: format(new Date(), "yyyy-MM-dd"),
+      dataPagamento: formatDate(new Date()),
       valorPago: 0,
       observacao: "",
     },
@@ -39,7 +42,7 @@ export function PagarContaSheet() {
   React.useEffect(() => {
     if (contaSelecionadaParaPagar) {
       reset({
-        dataPagamento: format(new Date(), "yyyy-MM-dd"),
+        dataPagamento: formatDate(new Date()),
         valorPago: Number(contaSelecionadaParaPagar.valor),
         observacao: contaSelecionadaParaPagar.observacao || "",
       });
@@ -130,18 +133,23 @@ export function PagarContaSheet() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="dataPagamento" className="text-xs font-semibold">
-              Data do Pagamento
+              Data do Pagamento (DD/MM/AAAA)
             </Label>
-            <div className="relative">
-              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="dataPagamento"
-                type="date"
-                className="pl-10 h-11 text-sm rounded-xl"
-                disabled={isLoading}
-                {...register("dataPagamento")}
-              />
-            </div>
+            <Controller
+              name="dataPagamento"
+              control={control}
+              render={({ field }) => (
+                <DateInput
+                  id="dataPagamento"
+                  className="h-11 rounded-xl text-sm"
+                  disabled={isLoading}
+                  value={field.value}
+                  onChange={(val) => field.onChange(val)}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                />
+              )}
+            />
             {errors.dataPagamento && (
               <p className="text-xs text-destructive font-medium">
                 {errors.dataPagamento.message}
@@ -154,17 +162,24 @@ export function PagarContaSheet() {
               Valor Pago (R$)
             </Label>
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground z-10">
                 R$
               </span>
-              <Input
-                id="valorPago"
-                type="number"
-                step="0.01"
-                placeholder="0,00"
-                className="pl-10 h-11 text-sm rounded-xl font-bold"
-                disabled={isLoading}
-                {...register("valorPago")}
+              <Controller
+                name="valorPago"
+                control={control}
+                render={({ field }) => (
+                  <CurrencyInput
+                    id="valorPago"
+                    placeholder="0,00"
+                    className="pl-10 h-11 text-sm rounded-xl font-bold"
+                    disabled={isLoading}
+                    value={field.value}
+                    onChange={(val) => field.onChange(val)}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                  />
+                )}
               />
             </div>
             {errors.valorPago && (

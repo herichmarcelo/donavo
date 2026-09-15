@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { contaSchema } from "@/lib/validations/conta";
-import { parseISO } from "date-fns";
+import { parseDateSafe } from "@/lib/formatters";
 
 export async function GET(
   req: NextRequest,
@@ -52,7 +52,7 @@ export async function PUT(
         fornecedor: validatedData.fornecedor,
         valor: Number(validatedData.valor),
         discriminacao: validatedData.discriminacao,
-        dataVencimento: parseISO(validatedData.dataVencimento),
+        dataVencimento: parseDateSafe(validatedData.dataVencimento) || new Date(),
         categoria: validatedData.categoria,
         observacao: validatedData.observacao,
       },

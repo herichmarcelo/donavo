@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { pagarContaSchema } from "@/lib/validations/conta";
-import { parseISO } from "date-fns";
+import { parseDateSafe } from "@/lib/formatters";
 
 export async function PATCH(
   req: NextRequest,
@@ -21,7 +21,7 @@ export async function PATCH(
       where: { id: params.id },
       data: {
         status: "PAGA",
-        dataPagamento: parseISO(validatedData.dataPagamento),
+        dataPagamento: parseDateSafe(validatedData.dataPagamento) || new Date(),
         valorPago: Number(validatedData.valorPago),
         observacao: validatedData.observacao || undefined,
       },
