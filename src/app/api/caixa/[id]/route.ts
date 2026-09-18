@@ -41,13 +41,27 @@ export async function PUT(
     const body = await req.json();
     const validatedData = entradaCaixaSchema.parse(body);
 
+    const valorDinheiro = Number(validatedData.valorDinheiro) || 0;
+    const valorDebito = Number(validatedData.valorDebito) || 0;
+    const valorCredito = Number(validatedData.valorCredito) || 0;
+    const valorPix = Number(validatedData.valorPix) || 0;
+    const valorVoucher = Number(validatedData.valorVoucher) || 0;
+    const valorTotal =
+      valorDinheiro + valorDebito + valorCredito + valorPix + valorVoucher;
+
     const entradaAtualizada = await prisma.entradaCaixa.update({
       where: { id: params.id },
       data: {
         descricao: validatedData.descricao,
-        valor: Number(validatedData.valor),
+        valorDinheiro,
+        valorDebito,
+        valorCredito,
+        valorPix,
+        valorVoucher,
+        valorTotal,
+        valor: valorTotal,
         dataEntrada: parseISO(validatedData.dataEntrada),
-        tipo: validatedData.tipo,
+        tipo: validatedData.tipo || "VENDA",
         observacao: validatedData.observacao,
       },
     });

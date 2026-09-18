@@ -52,7 +52,7 @@ export async function GET() {
       // 3. Entradas do mês - agregação
       prisma.entradaCaixa.aggregate({
         where: { dataEntrada: { gte: inicioMes, lte: fimMes } },
-        _sum: { valor: true },
+        _sum: { valorTotal: true, valor: true },
         _count: true,
       }),
 
@@ -107,7 +107,7 @@ export async function GET() {
     try {
       [entradasAgrupadas, saidasAgrupadas] = await Promise.all([
         prisma.$queryRaw<{ mes: Date; total: number }[]>`
-          SELECT date_trunc('month', "dataEntrada") AS mes, SUM(valor)::float AS total
+          SELECT date_trunc('month', "dataEntrada") AS mes, SUM(COALESCE("valor_total", valor))::float AS total
           FROM "entradas_caixa"
           WHERE "dataEntrada" >= ${inicioJanela} AND "dataEntrada" <= ${fimMes}
           GROUP BY mes
@@ -158,7 +158,9 @@ export async function GET() {
       { name: "Outras", value: getCategoria("OUTRAS"), color: "#5B8FA8" },
     ];
 
-    const totalEntradasMes = Number(kpiEntradasMes._sum.valor || 0);
+    const totalEntradasMes = Number(
+      kpiEntradasMes._sum.valorTotal ?? kpiEntradasMes._sum.valor ?? 0
+    );
     const totalDespesasMes = Number(kpiDespesasMes._sum.valor || 0);
 
     return NextResponse.json({

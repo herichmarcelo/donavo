@@ -66,15 +66,21 @@ enum Categoria {
 }
 
 model EntradaCaixa {
-  id          String      @id @default(cuid())
-  descricao   String
-  valor       Decimal     @db.Decimal(10, 2)
-  dataEntrada DateTime    @default(now())
-  tipo        TipoEntrada @default(MANUAL)
-  observacao  String?
-  usuarioId   String
-  usuario     Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  createdAt   DateTime    @default(now())
+  id            String      @id @default(cuid())
+  descricao     String
+  valor         Decimal     @default(0) @db.Decimal(10, 2)
+  valorTotal    Decimal     @default(0) @map("valor_total") @db.Decimal(10, 2)
+  valorDinheiro Decimal     @default(0) @map("valor_dinheiro") @db.Decimal(10, 2)
+  valorDebito   Decimal     @default(0) @map("valor_debito") @db.Decimal(10, 2)
+  valorCredito  Decimal     @default(0) @map("valor_credito") @db.Decimal(10, 2)
+  valorPix      Decimal     @default(0) @map("valor_pix") @db.Decimal(10, 2)
+  valorVoucher  Decimal     @default(0) @map("valor_voucher") @db.Decimal(10, 2)
+  dataEntrada   DateTime    @default(now())
+  tipo          TipoEntrada @default(VENDA)
+  observacao    String?
+  usuarioId     String
+  usuario       Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
 
   @@index([dataEntrada])
   @@map("entradas_caixa")

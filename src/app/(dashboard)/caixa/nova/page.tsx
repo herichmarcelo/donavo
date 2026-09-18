@@ -25,7 +25,7 @@ export default function NovaEntradaPage() {
             Registrar Entrada de Caixa
           </h2>
           <p className="text-xs text-muted-foreground">
-            Lançamento manual de vendas, aportes ou outros recebimentos
+            Lançamento de receitas e vendas com divisão por forma de pagamento
           </p>
         </div>
       </div>

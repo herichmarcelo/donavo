@@ -48,8 +48,14 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const totalPeriodo = entradas.reduce((acc, e) => acc + Number(e.valor), 0);
-    const totalHoje = entradasHoje.reduce((acc, e) => acc + Number(e.valor), 0);
+    const totalPeriodo = entradas.reduce(
+      (acc, e) => acc + Number(e.valorTotal ?? e.valor ?? 0),
+      0
+    );
+    const totalHoje = entradasHoje.reduce(
+      (acc, e) => acc + Number(e.valorTotal ?? e.valor ?? 0),
+      0
+    );
 
     return NextResponse.json({
       entradas,
@@ -78,12 +84,26 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validatedData = entradaCaixaSchema.parse(body);
 
+    const valorDinheiro = Number(validatedData.valorDinheiro) || 0;
+    const valorDebito = Number(validatedData.valorDebito) || 0;
+    const valorCredito = Number(validatedData.valorCredito) || 0;
+    const valorPix = Number(validatedData.valorPix) || 0;
+    const valorVoucher = Number(validatedData.valorVoucher) || 0;
+    const valorTotal =
+      valorDinheiro + valorDebito + valorCredito + valorPix + valorVoucher;
+
     const novaEntrada = await prisma.entradaCaixa.create({
       data: {
         descricao: validatedData.descricao,
-        valor: Number(validatedData.valor),
+        valorDinheiro,
+        valorDebito,
+        valorCredito,
+        valorPix,
+        valorVoucher,
+        valorTotal,
+        valor: valorTotal,
         dataEntrada: parseDateSafe(validatedData.dataEntrada) || new Date(),
-        tipo: validatedData.tipo,
+        tipo: validatedData.tipo || "VENDA",
         observacao: validatedData.observacao,
         usuarioId: session.user.id,
       },
